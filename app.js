@@ -48,23 +48,43 @@ userSchema.plugin(findOrCreate);
 const User = new mongoose.model("User", userSchema);
 //passport strategy
 passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
 
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   callbackURL: "http://localhost:3000/auth/google/secrets",
-  userProfileURL: "https://www.goggleapis.com/oauth2/v3/userinfo"
+  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
 function(accessToken, refreshToken, profile, cb) {
+  console.log(profile)
   User.findOrCreate({ googleId: profile.id }, function (err, user) {
     return cb(err, user);
   });
 }
 ));
 
+//route for the google button
+app.get("/auth/google", 
+    passport.authenticate("google", {scope: ["profile"]} )
+);
 
+app.get("/auth/google/secrets", 
+passport.authenticate("google", {failureRedirect: "/login"}),
+function(req, res){
+  //successful authentication, redirect home,
+  res.redirect("/");
+
+});
 
 
 
