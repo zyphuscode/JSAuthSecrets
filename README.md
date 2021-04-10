@@ -1,5 +1,5 @@
 ## JS Auth login
-A full stack "register/login" site for users, implementing cookies and sessions with PassportJS. Users get the option to login via Google (via OAuth) or register new account locally with the site, which are stored in a MongoDB backed.
+A full stack "register/login" site for users, implementing cookies and sessions with PassportJS. Users get the option to login via Google (via OAuth) or register new account locally with the site, which are stored in a MongoDB backend.
 
 
 ## Motivation
